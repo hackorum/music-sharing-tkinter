@@ -84,6 +84,23 @@ def stop():
     infoLabel.configure(text="")
 
 
+def pause():
+    global song_selected
+
+    pygame
+    mixer.init()
+    mixer.music.load("shared_files/" + song_selected)
+    mixer.music.pause()
+
+
+def resume():
+    global song_selected
+
+    mixer.init()
+    mixer.music.load("shared_files/" + song_selected)
+    mixer.music.play()
+
+
 def musicWindow():
     global song_counter
     global listbox
@@ -92,7 +109,7 @@ def musicWindow():
     window = Tk()
 
     window.title("Music Sharing")
-    window.geometry("320x300")
+    window.geometry("320x350")
     window.configure(bg="LightSkyBlue")
 
     selectLabel = Label(
@@ -156,8 +173,30 @@ def musicWindow():
     )
     download.place(x=200, y=250)
 
+    resumeButton = Button(
+        window,
+        text="Resume",
+        width=10,
+        bd=1,
+        bg="SkyBlue",
+        font=("Calibri", 10),
+        command=resume,
+    )
+    resumeButton.place(x=30, y=300)
+
+    pauseButton = Button(
+        window,
+        text="Pause",
+        width=10,
+        bd=1,
+        bg="SkyBlue",
+        font=("Calibri", 10),
+        command=pause,
+    )
+    pauseButton.place(x=200, y=300)
+
     infoLabel = Label(window, text="", fg="blue", font=("Calibri", 8))
-    infoLabel.place(x=4, y=280)
+    infoLabel.place(x=4, y=330)
 
     window.mainloop()
 
