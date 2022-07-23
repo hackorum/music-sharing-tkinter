@@ -1,67 +1,124 @@
+import os
 import socket
+import time
 from threading import Thread
 from tkinter import *
 from tkinter import ttk
 
+import pygame
+from playsound import playsound
+from pygame import mixer
 
 PORT = 8080
-IP_ADDRESS = '127.0.0.1'
+IP_ADDRESS = "127.0.0.1"
 SERVER = None
 BUFFER_SIZE = 4096
 
 
 name = None
 listbox = None
-textarea = None
-labelchat = None
-text_message = None
 filePathLabel = None
+song_counter = 0
+infoLabel = None
 
 
-def connectToServer():
-    global SERVER
-    global name
+def play():
+    global song_selected
+    global listbox
+    song_selected = listbox.get(ANCHOR)
 
-    cname = name.get()
-    SERVER.send(cname.encode())
+    pygame
+    mixer.init()
+    mixer.music.load("shared_files/" + song_selected)
+    mixer.music.play()
+    if song_selected != "":
+        infoLabel.configure(
+            text="Now Playing: " + song_selected,
+            fg="white",
+            bg="LightSkyBlue",
+            font=("Calibri", 15),
+        )
+    else:
+        infoLabel.configure(text="")
+
+
+def stop():
+    global song_selected
+
+    pygame
+    mixer.init()
+    mixer.music.load("shared_files/" + song_selected)
+    mixer.music.pause()
+    infoLabel.configure(text="")
 
 
 def musicWindow():
+    global song_counter
+    global listbox
+    global infoLabel
+
     window = Tk()
 
-    window.title('Music Sharing')
+    window.title("Music Sharing")
     window.geometry("320x300")
     window.configure(bg="LightSkyBlue")
 
-    selectLabel = Label(window, text="Select Song",
-                        bg="LightSkyBlue", font=('Calibri', 10), fg="black")
+    selectLabel = Label(
+        window, text="Select Song", bg="LightSkyBlue", font=("Calibri", 10), fg="black"
+    )
     selectLabel.place(x=2, y=1)
 
-    listbox = Listbox(window, height=10, width=39, activestyle='dotbox',
-                      bg="LightSkyBlue", borderwidth=2, font=('Calibri', 10))
+    listbox = Listbox(
+        window,
+        height=10,
+        width=39,
+        activestyle="dotbox",
+        bg="LightSkyBlue",
+        borderwidth=2,
+        font=("Calibri", 10),
+    )
     listbox.place(x=10, y=20)
+    for file in os.listdir("shared_files"):
+        filename = os.fsdecode(file)
+        listbox.insert(song_counter, filename)
+        song_counter = song_counter + 1
 
     scrollbar1 = Scrollbar(listbox)
     scrollbar1.place(relheight=1, relx=1)
     scrollbar1.config(command=listbox.yview)
 
-    playButton = Button(window, text="Play", width=10,
-                        bg="LightSkyBlue", font=('Calibri', 10))
+    playButton = Button(
+        window,
+        text="Play",
+        width=10,
+        bg="LightSkyBlue",
+        font=("Calibri", 10),
+        command=play,
+    )
     playButton.place(x=30, y=200)
 
-    stop = Button(window, text="Stop", bd=1, width=10,
-                  bg="LightSkyBlue", font=('Calibri', 10))
-    stop.place(x=200, y=200)
+    stopButton = Button(
+        window,
+        text="Stop",
+        bd=1,
+        width=10,
+        bg="LightSkyBlue",
+        font=("Calibri", 10),
+        command=stop,
+    )
+    stopButton.place(x=200, y=200)
 
-    upload = Button(window, text="Upload", width=10, bd=1,
-                    bg="LightSkyBlue", font=('Calibri', 10))
+    upload = Button(
+        window, text="Upload", width=10, bd=1, bg="LightSkyBlue", font=("Calibri", 10)
+    )
     upload.place(x=30, y=250)
 
-    download = Button(window, text="Download", width=10, bd=1,
-                      bg="LightSkyBlue", font=('Calibri', 10))
+    download = Button(
+        window, text="Download", width=10, bd=1, bg="LightSkyBlue", font=("Calibri", 10)
+    )
     download.place(x=200, y=250)
 
-    infoLabel = Label(window, text="", fg="blue", font=('Calibri', 8))
+    infoLabel = Label(window, text="", fg="blue", font=("Calibri", 8))
     infoLabel.place(x=4, y=280)
 
     window.mainloop()
