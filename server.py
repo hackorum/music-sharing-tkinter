@@ -1,6 +1,10 @@
 import socket
 from threading import Thread
 
+from pyftpdlib.authorizers import DummyAuthorizer
+from pyftpdlib.handlers import FTPHandler
+from pyftpdlib.servers import FTPServer
+
 IP_ADDRESS = "127.0.0.1"
 PORT = 8080
 SERVER = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -41,5 +45,21 @@ def setup():
     acceptConnections()
 
 
+def ftp():
+    global IP_ADDRESS
+
+    authorizer = DummyAuthorizer()
+    authorizer.add_user("lftpd", "lftpd", ".", perm="elradfmw")
+
+    handler = FTPHandler
+    handler.authorizer = authorizer
+
+    ftp_server = FTPServer((IP_ADDRESS, 21), handler)
+    ftp_server.serve_forever()
+
+
 setup_thread = Thread(target=setup)
 setup_thread.start()
+
+ftp_thread = Thread(target=ftp)
+ftp_thread.start()

@@ -1,9 +1,13 @@
+import ftplib
+import ntpath
 import os
 import socket
 import time
+from ftplib import FTP
+from pathlib import Path
 from threading import Thread
 from tkinter import *
-from tkinter import ttk
+from tkinter import filedialog, ttk
 
 import pygame
 from playsound import playsound
@@ -20,6 +24,34 @@ listbox = None
 filePathLabel = None
 song_counter = 0
 infoLabel = None
+
+
+def browseFiles():
+    global listbox
+    global song_counter
+    global filePathLabel
+
+    try:
+        filename = filedialog.askopenfilename()
+        HOSTNAME = "127.0.0.1"
+        USERNAME = "lftpd"
+        PASSWORD = "lftpd"
+
+        ftp_server = FTP(HOSTNAME, USERNAME, PASSWORD)
+        ftp_server.encoding = "utf-8"
+        ftp_server.cwd("shared_files")
+        fname = ntpath.basename(filename)
+        with open(filename, "rb") as file:
+            ftp_server.storbinary(f"STOR {fname}", file)
+
+        ftp_server.dir()
+        ftp_server.quit()
+
+        listbox.insert(song_counter, fname)
+        song_counter = song_counter + 1
+
+    except FileNotFoundError:
+        print("Cancel Button Pressed")
 
 
 def play():
@@ -109,7 +141,13 @@ def musicWindow():
     stopButton.place(x=200, y=200)
 
     upload = Button(
-        window, text="Upload", width=10, bd=1, bg="LightSkyBlue", font=("Calibri", 10)
+        window,
+        text="Upload",
+        width=10,
+        bd=1,
+        bg="LightSkyBlue",
+        font=("Calibri", 10),
+        command=browseFiles,
     )
     upload.place(x=30, y=250)
 
