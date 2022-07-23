@@ -135,7 +135,7 @@ def musicWindow():
     window = Tk()
 
     window.title("Music Sharing")
-    window.geometry("320x350")
+    window.geometry("320x380")
     window.configure(bg="LightSkyBlue")
 
     selectLabel = Label(
@@ -194,10 +194,16 @@ def musicWindow():
     )
     upload.place(x=30, y=250)
 
-    download = Button(
-        window, text="Download", width=10, bd=1, bg="LightSkyBlue", font=("Calibri", 10)
+    downloadButton = Button(
+        window,
+        text="Download",
+        width=10,
+        bd=1,
+        bg="LightSkyBlue",
+        font=("Calibri", 10),
+        command=download,
     )
-    download.place(x=200, y=250)
+    downloadButton.place(x=200, y=250)
 
     resumeButton = Button(
         window,
